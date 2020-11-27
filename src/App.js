@@ -118,6 +118,7 @@ export default function () {
     setActiveMessages(finalArray);
   };
 
+  // send Message to monday
   const sendMessageHandler = async (
     currentUserId,
     activeUserId,

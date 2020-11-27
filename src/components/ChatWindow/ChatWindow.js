@@ -7,27 +7,31 @@ import Update from "monday-ui-react-core/dist/icons/Update";
 export default function ({ currentUserId, activeUserId, sendMessage }) {
   const [text, setText] = useState("");
 
-  useEffect(() => {
-    document.addEventListener("keydown", keyHandler, false);
-    return () => {
-      document.removeEventListener("keydown", keyHandler, false);
-    };
-  }, []);
+  // not ready yet
+  if (!activeUserId || !currentUserId) {
+    return <div></div>;
+  }
 
-  const keyHandler = (event) => {
-    if (event.key === "Enter") {
-      clickHandler(event);
-    }
-  };
+  // user can send on click
   const clickHandler = (e) => {
     e.preventDefault();
     sendMessage(currentUserId, activeUserId, text);
     setText("");
   };
 
-  if (!activeUserId || !currentUserId) {
-    return <div></div>;
-  }
+  // she can also send the message when Enter is pressed
+  useEffect(() => {
+    const keyHandler = (event) => {
+      if (event.key === "Enter") {
+        sendMessage(currentUserId, activeUserId, text);
+        setText("");
+      }
+    };
+    document.addEventListener("keydown", keyHandler, false);
+    return () => {
+      document.removeEventListener("keydown", keyHandler, false);
+    };
+  }, [currentUserId, activeUserId, text, sendMessage]);
 
   return (
     <div className={styles.chatWindow}>

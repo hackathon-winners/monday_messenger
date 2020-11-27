@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import styles from "./Message.module.css";
 import { dateformatter } from "../../helper/date";

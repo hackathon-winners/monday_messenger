@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Search } from "monday-ui-react-core";
 import styles from "./Sidebar.module.css";
 
