@@ -4,9 +4,8 @@ import {
   SearchBar, // the search bar the user will type into
   SearchContext, // the context that wraps and connects our components
   SearchContextManager, // the context manager, includes the Context.Provider
-  SuggestionBar, // an optional UI component that displays trending searches and channel / username results
 } from "@giphy/react-components";
-import { sendMessage } from "../../helper/api";
+import styles from "./GiphySearch.module.css";
 
 // define the components in a separate function so we can
 // use the context hook. You could also use the render props pattern
@@ -15,11 +14,11 @@ const Components = ({ onSelect }) => {
   return (
     <>
       <SearchBar />
-      <div style={{ display: "flex" }}>
+      <div className={styles.images}>
         <Carousel
           fetchGifs={fetchGifs}
-          gifHeight={200}
-          gutter={6}
+          gifHeight={150}
+          gutter={4}
           key={searchKey}
           onGifClick={(gif, e) => {
             e.preventDefault();

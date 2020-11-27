@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import ResizeableTextarea from "../ResizeableTexarea/ResizeableTextarea";
 import styles from "./ChatWindow.module.css";
-import { Button, MenuButton } from "monday-ui-react-core";
+import { Button } from "monday-ui-react-core";
 import Update from "monday-ui-react-core/dist/icons/Update";
-import Image from "monday-ui-react-core/dist/icons/Image";
 import GiphySearch from "../GiphySearch/GiphySearch";
 
 import Picker from "emoji-picker-react";
@@ -27,13 +26,10 @@ export default function ({
 
   // user can send on click
   const giphyHandler = (gif) => {
-    console.log(gif);
     sendMessage(currentUserId, activeUserId, gif.images.downsized.url, context);
-    setText("");
   };
 
   const onEmojiClick = (event, emojiObject) => {
-    console.log(emojiObject);
     setText((prev) => prev + emojiObject.emoji);
   };
 
@@ -76,17 +72,19 @@ export default function ({
                 <Picker onEmojiClick={onEmojiClick} />
               </div>
             )}
-            <Button
-              size={Button.sizes.SMALL}
-              kind={Button.kinds.SECONDARY}
-              onClick={(e) => setShowEmoji((prev) => !prev)}>
-              Emojicon
-            </Button>
+            {!showGiphy && (
+              <Button
+                size={Button.sizes.SMALL}
+                kind={Button.kinds.SECONDARY}
+                onClick={(e) => setShowEmoji((prev) => !prev)}>
+                Emoji
+              </Button>
+            )}
             <Button
               size={Button.sizes.SMALL}
               kind={Button.kinds.SECONDARY}
               onClick={() => setShowGiphy((prev) => !prev)}>
-              Giphy
+              {showGiphy ? "back" : "Giphy"}
             </Button>
           </div>
           {!showGiphy && (

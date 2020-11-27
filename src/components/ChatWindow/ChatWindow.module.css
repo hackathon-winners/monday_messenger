@@ -1,6 +1,7 @@
 .chatWindow {
   padding: 8px;
   position: relative;
+  flex-shrink: 1;
 }
 
 .chat {

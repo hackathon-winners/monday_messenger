@@ -1,0 +1,4 @@
+.images {
+  overflow-y: scroll;
+  max-width: 600px;
+}
