@@ -15,7 +15,7 @@ export default function ({ user, message, discussionChange = false }) {
         <div className={styles.messageBody}>
           <div className={styles.messageTitle}>
             <strong>{user.name}</strong>
-            <small>{dateformatter(message.created_at)}</small>
+            <small>{dateformatter(message.created_at, "time")}</small>
           </div>
           <div className={styles.message}>{message.text}</div>
         </div>
@@ -25,7 +25,9 @@ export default function ({ user, message, discussionChange = false }) {
 
   return (
     <div className={styles.messageContainer}>
-      <small className={styles.time}>{dateformatter(message.created_at)}</small>
+      <small className={styles.time}>
+        {dateformatter(message.created_at, "time")}
+      </small>
       <div className={styles.messageBody}>
         <div className={styles.message}>{message.text}</div>
       </div>

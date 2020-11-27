@@ -1,14 +1,25 @@
-export const dateformatter = (unix_timestamp) => {
+export const dateformatter = (unix_timestamp, type) => {
   // Create a new JavaScript Date object based on the timestamp
   // multiplied by 1000 so that the argument is in milliseconds, not seconds.
-  var date = new Date(unix_timestamp * 1000);
-  // Hours part from the timestamp
-  var hours = date.getHours();
-  // Minutes part from the timestamp
-  var minutes = "0" + date.getMinutes();
+  const date = new Date(unix_timestamp);
 
-  // Will display time in 10:30:23 format
-  var formattedTime = hours + ":" + minutes.substr(-2);
+  const year = "" + date.getFullYear();
+  let month = "0" + (date.getMonth() + 1);
+  let day = "0" + date.getDate();
 
-  return formattedTime;
+  const hours = "0" + date.getHours();
+  const minutes = "0" + date.getMinutes();
+
+  switch (type) {
+    case "time":
+      return `${hours.substr(-2)}:${minutes.substr(-2)}`;
+
+    case "date":
+      return `${day.substr(-2)}.${month.substr(-2)}.${year}`;
+
+    default:
+      return `${day.substr(-2)}.${month.substr(-2)}.${year} ${hours.substr(
+        -2
+      )}:${minutes.substr(-2)}`;
+  }
 };

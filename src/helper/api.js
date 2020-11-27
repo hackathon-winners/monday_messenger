@@ -74,23 +74,25 @@ export const sendMessage = async (
   await monday.storage.instance.setItem(storageKey, messageString);
 
   // we make sure that the activeChat List of the user contains the Object
-  updateList(
+  updateList({
     monday,
-    `${currentUserId}_active`,
-    activeUserId,
-    messageContainer.text,
-    setActiveChats
-  );
+    key: `${currentUserId}_active`,
+    userId: activeUserId,
+    message: messageText,
+    type: "active",
+    setActiveChats,
+  });
 
   // we add the Object to the unread List of the recieving user
   // as promise for speed
   if (activeUserId !== currentUserId) {
-    updateList(
+    updateList({
       monday,
-      `${activeUserId}_unread`,
-      currentUserId,
-      messageContainer.text
-    );
+      key: `${activeUserId}_unread`,
+      userId: currentUserId,
+      message: messageText,
+      type: "unread",
+    });
   }
 
   // Notification Logic
@@ -115,13 +117,14 @@ export const mergeStorageResults = (responses) => {
   }, []);
 };
 
-export const updateList = async (
+export const updateList = async ({
   monday,
   key,
   userId,
   message,
-  callback = (r) => {}
-) => {
+  type,
+  callback = (r) => {},
+}) => {
   const chatsRaw = await monday.storage.instance.getItem(key);
 
   let chats = JSON.parse(chatsRaw.data.value);
@@ -145,10 +148,9 @@ export const updateList = async (
       userId: userId,
       last_seen_at: Date.now(),
       last_message: message,
+      type: type,
     });
   }
-
-  console.log(chats);
 
   return monday.storage.instance
     .setItem(key, JSON.stringify(chats))
