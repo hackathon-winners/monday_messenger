@@ -1,0 +1,34 @@
+.messageContainer {
+  display: flex;
+  padding: 2px 4px;
+  align-items: center;
+}
+
+.person {
+  padding: 4px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.time {
+  padding: 4px;
+  width: 40px;
+  visibility: hidden;
+}
+
+.messageContainer:hover > .time {
+  visibility: visible;
+}
+
+.messageBody {
+  padding-left: 4px;
+}
+.messageTitle {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.messageTitle > strong {
+  padding-right: 8px;
+}

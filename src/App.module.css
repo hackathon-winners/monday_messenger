@@ -1,0 +1,29 @@
+:global(body),
+:global(html),
+:global(#root) {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+:global(a) {
+  text-decoration: none;
+}
+
+.App {
+  font-family: "Roboto", sans-serif;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: top;
+
+  overflow: hidden;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+}
