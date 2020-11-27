@@ -73,6 +73,11 @@ export const sendMessage = async (
   // and set it to storage
   await monday.storage.instance.setItem(storageKey, messageString);
 
+  console.log("current user send", currentUserId);
+  console.log("active user send", activeUserId);
+  console.log("text", messageText);
+  console.log(setActiveChats);
+
   // we make sure that the activeChat List of the user contains the Object
   updateList({
     monday,
@@ -123,11 +128,13 @@ export const updateList = async ({
   userId,
   message,
   type,
-  callback = (r) => {},
+  setActiveChats = (r) => {},
 }) => {
   const chatsRaw = await monday.storage.instance.getItem(key);
 
   let chats = JSON.parse(chatsRaw.data.value);
+
+  console.log(chats);
 
   if (!chats) {
     chats = [];
@@ -152,9 +159,11 @@ export const updateList = async ({
     });
   }
 
+  setActiveChats(chats);
+
+  console.log(chats);
+
   return monday.storage.instance
     .setItem(key, JSON.stringify(chats))
-    .then((resp) => {
-      callback(chats);
-    });
+    .then((resp) => {});
 };

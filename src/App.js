@@ -89,6 +89,9 @@ export default function () {
   };
 
   const sendMessageHandler = (currentUserId, activeUserId, text) => {
+    console.log("current id", currentUserId);
+    console.log("active id", activeUserId);
+    console.log("text", text);
     sendMessage(
       monday,
       currentUserId,

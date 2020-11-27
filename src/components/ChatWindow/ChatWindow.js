@@ -4,7 +4,7 @@ import styles from "./ChatWindow.module.css";
 import { Button } from "monday-ui-react-core";
 import Update from "monday-ui-react-core/dist/icons/Update";
 
-export default function ({ monday, currentUserId, activeUserId, sendMessage }) {
+export default function ({ currentUserId, activeUserId, sendMessage }) {
   const [text, setText] = useState("");
 
   // user can send on click

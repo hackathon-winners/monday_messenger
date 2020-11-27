@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Search } from "monday-ui-react-core";
 import styles from "./Sidebar.module.css";
 import { dateformatter } from "../../helper/date";
@@ -12,7 +12,10 @@ export default function ({
   activeUserId,
   setActiveUserId,
 }) {
+  const [search, setSearch] = useState();
+  // you search for all users
   const handleSearch = (activeChats, searchTerm) => {
+    setSearch(searchTerm);
     if (!searchTerm) {
       return setListedChats(activeChats);
     }
@@ -24,6 +27,24 @@ export default function ({
     setListedChats(possibleChatPartner);
   };
 
+  useEffect(() => {
+    if (
+      !search &&
+      JSON.stringify(activeChats) !== JSON.stringify(listedChats)
+    ) {
+      setListedChats(activeChats);
+    }
+  }, [activeChats, listedChats, search, setListedChats]);
+
+  // sort the Chats
+  const listedChatsSorted = listedChats.sort(
+    (a, b) => b.last_seen_at - a.last_seen_at
+  );
+
+  if (!allUsers) {
+    return <div className={styles.sidebar}></div>;
+  }
+
   return (
     <div className={styles.sidebar}>
       <Search
@@ -32,9 +53,11 @@ export default function ({
         placeholder="Enter Person to talk to"
       />
       <nav className={styles.userlist}>
-        {listedChats && listedChats.length === 0 && <div>No Chats yet</div>}
-        {listedChats &&
-          listedChats.map((userObj) => {
+        {listedChatsSorted && listedChatsSorted.length === 0 && (
+          <div>No Chats yet</div>
+        )}
+        {listedChatsSorted &&
+          listedChatsSorted.map((userObj) => {
             // get user
             const user = getPersonById(allUsers.users, userObj.userId);
 
