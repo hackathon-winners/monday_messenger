@@ -17,7 +17,10 @@ export default function ({ user, message, discussionChange = false }) {
             <strong>{user.name}</strong>
             <small>{dateformatter(message.created_at, "time")}</small>
           </div>
-          <div className={styles.message}>{message.text}</div>
+          {!message.text.includes("giphy.com") && (
+            <div className={styles.message}>{message.text}</div>
+          )}
+          {message.text.includes("giphy.com") && <img src={message.text} />}
         </div>
       </div>
     );
@@ -29,7 +32,10 @@ export default function ({ user, message, discussionChange = false }) {
         {dateformatter(message.created_at, "time")}
       </small>
       <div className={styles.messageBody}>
-        <div className={styles.message}>{message.text}</div>
+        {!message.text.includes("giphy.com") && (
+          <div className={styles.message}>{message.text}</div>
+        )}
+        {message.text.includes("giphy.com") && <img src={message.text} />}
       </div>
     </div>
   );

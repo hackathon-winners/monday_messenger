@@ -51,13 +51,14 @@ export const loadMessages = async (monday, from, to) => {
 };
 
 // send Message to monday
-export const sendMessage = async (
+export const sendMessage = async ({
   monday,
+  context,
   currentUserId,
   activeUserId,
   messageText,
-  setActiveChats
-) => {
+  setActiveChats,
+}) => {
   const storageKey = `${currentUserId}_${activeUserId}`;
 
   let messageContainer = [];
@@ -87,7 +88,6 @@ export const sendMessage = async (
   console.log("current user send", currentUserId);
   console.log("active user send", activeUserId);
   console.log("text", messageText);
-  console.log(setActiveChats);
 
   // we make sure that the activeChat List of the user contains the Object
   updateList({
@@ -118,6 +118,19 @@ export const sendMessage = async (
   // -- the last message was not sent by us
   // - OR
   // -- the last message was sent by us more than 1hs ago
+  if (context.instanceId > 0) {
+    monday
+      .api(
+        `mutation {
+        create_notification (user_id: ${activeUserId}, target_id: ${context.instanceId}, text: "Xou got a message", target_type: Project) {
+          text
+        }
+      }`
+      )
+      .then((res) => {
+        console.log(res);
+      });
+  }
 
   // load all messages
   return loadMessages(monday, currentUserId, activeUserId);

@@ -32,6 +32,8 @@
   justify-content: center;
   line-height: 18px;
   margin-left: 8px;
+
+  max-width: calc(100% - 56px);
 }
 
 .personName {
@@ -48,7 +50,12 @@
   display: flex;
   justify-content: space-between;
 }
-.span {
+
+.lastMessage span {
+  text-overflow: ellipsis;
+  /* Required for text-overflow to do anything */
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .menuButton {

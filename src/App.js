@@ -19,6 +19,7 @@ import "monday-ui-react-core/dist/main.css";
 const monday = mondaySdk();
 
 export default function () {
+  const [context, setContext] = useState();
   // user specifics
   const [currentUser, setCurrentUser] = useState();
   const [allUsers, setAllUsers] = useState();
@@ -31,8 +32,12 @@ export default function () {
   const [activeUserId, setActiveUserId] = useState();
   const [activeMessages, setActiveMessages] = useState();
 
-  // get all Users
   useEffect(() => {
+    // get context
+    monday.listen("context", (res) => {
+      setContext(res.data);
+    });
+    // get userdata
     monday
       .api(
         `query {
@@ -103,15 +108,16 @@ export default function () {
     setListedChats(chatsArray);
   };
 
-  const sendMessageHandler = (currentUserId, activeUserId, text) => {
+  const sendMessageHandler = (currentUserId, activeUserId, text, context) => {
     if (text) {
-      sendMessage(
+      sendMessage({
         monday,
+        context,
         currentUserId,
         activeUserId,
-        text,
-        setActiveChats
-      ).then((resp) => setActiveMessages(resp));
+        messageText: text,
+        setActiveChats,
+      }).then((resp) => setActiveMessages(resp));
     }
   };
 
@@ -148,6 +154,7 @@ export default function () {
         />
         {currentUser && (
           <ChatWindow
+            context={context}
             sendMessage={sendMessageHandler}
             currentUserId={currentUser.id}
             activeUserId={activeUserId}

@@ -1,9 +1,28 @@
 .chatWindow {
   padding: 8px;
+  position: relative;
 }
 
 .chat {
   border: 1px solid #ccc;
   border-radius: 3px;
+  padding: 8px;
   display: flex;
+  flex-direction: column;
+}
+.textContainer {
+  display: flex;
+}
+.actionContainer {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+.extraContainer {
+}
+
+.emojiContainer {
+  position: absolute;
+  bottom: -8px;
+  left: -295px;
 }
