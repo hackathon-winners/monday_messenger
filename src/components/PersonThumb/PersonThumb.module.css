@@ -1,0 +1,27 @@
+.container {
+  position: relative;
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.personBullet {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  display: flex;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.guestIcon {
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  width: 53%;
+  height: 53%;
+  max-width: 18px;
+  max-height: 18px;
+  transform: rotate(-10deg);
+}

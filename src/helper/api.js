@@ -1,5 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 
+export const getPersonById = (users, userId) => {
+  return users.find((user) => user.id === userId);
+};
 // load chats
 export const loadActiveChats = async (monday, userId) => {
   const storageKeyActive = `${userId}_active`;
@@ -8,15 +11,23 @@ export const loadActiveChats = async (monday, userId) => {
   // we load parallel for faster loading
   const promises = [];
 
-  promises.push(monday.storage.instance.getItem(storageKeyActive));
   promises.push(monday.storage.instance.getItem(storageKeyUnread));
+  promises.push(monday.storage.instance.getItem(storageKeyActive));
 
   // we wait for both promises to get a full message list
   const chatsRaw = await Promise.all(promises);
 
   const chatsArray = mergeStorageResults(chatsRaw);
 
-  return chatsArray;
+  // we remove duplicates (entry can be in unread and active)
+  // because we are handling object arrays, this is quite tedious
+  // @todo: make sure unread always comes first
+  const output = chatsArray.filter(
+    (chat, index, self) =>
+      index === self.findIndex((t) => t.userId === chat.userId)
+  );
+
+  return output;
 };
 
 // Message loader
@@ -134,8 +145,6 @@ export const updateList = async ({
 
   let chats = JSON.parse(chatsRaw.data.value);
 
-  console.log(chats);
-
   if (!chats) {
     chats = [];
   }
@@ -161,9 +170,33 @@ export const updateList = async ({
 
   setActiveChats(chats);
 
-  console.log(chats);
-
   return monday.storage.instance
     .setItem(key, JSON.stringify(chats))
     .then((resp) => {});
+};
+
+export const removeFromList = async ({ monday, key, userId }) => {
+  const chatsRaw = await monday.storage.instance.getItem(key);
+
+  let chats = JSON.parse(chatsRaw.data.value);
+
+  console.log(chats);
+
+  if (!chats) {
+    return;
+  }
+
+  const chatlistWithoutChat = [];
+  for (let i = 0; i < chats.length; i++) {
+    if (chats[i].userId !== userId) {
+      chatlistWithoutChat.push(chats[i]);
+    }
+  }
+
+  console.log(chatlistWithoutChat);
+
+  return monday.storage.instance.setItem(
+    key,
+    JSON.stringify(chatlistWithoutChat)
+  );
 };
