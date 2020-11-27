@@ -4,18 +4,22 @@ import styles from "./Sidebar.module.css";
 
 export default function ({
   allUsers,
+  activeChats,
   listedChats,
   setListedChats,
   getPersonById,
   activeUserId,
   setActiveUserId,
 }) {
-  const handleSearch = (searchTerm) => {
+  const handleSearch = (activeChats, searchTerm) => {
+    console.log(activeChats);
+    if (!searchTerm) {
+      return setListedChats(activeChats);
+    }
+
     const possibleChatPartner = allUsers.users
       .filter((user) => user.name.includes(searchTerm))
-      .map((user) => user.id);
-
-    console.log(possibleChatPartner);
+      .map((user) => ({ userId: user.id }));
 
     setListedChats(possibleChatPartner);
   };
@@ -24,16 +28,19 @@ export default function ({
     <div className={styles.sidebar}>
       <Search
         iconName="icon-v2-search"
-        onChange={handleSearch}
+        onChange={(searchTerm) => handleSearch(activeChats, searchTerm)}
         placeholder="Enter Person to talk to"
       />
       <nav className={styles.userlist}>
         {listedChats && listedChats.length === 0 && <div>No Chats yet</div>}
         {listedChats &&
-          listedChats.map((userId) => {
+          listedChats.map((userObj) => {
             // get user
-            const user = getPersonById(allUsers.users, userId);
+            const user = getPersonById(allUsers.users, userObj.userId);
 
+            if (!user) {
+              return <></>;
+            }
             return (
               <div
                 key={user.id}

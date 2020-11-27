@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./ResizeableTextarea.module.css";
 
-export default function ({ text, setText }) {
+export default function ({ text, setText, activeUserId }) {
   const [rows, setRows] = useState(1);
+  const inputRef = useRef();
 
   const minRows = 1;
   const maxRows = 10;
+
+  // we focus when chat is changed on the input field
+  useEffect(() => {
+    inputRef.current.focus();
+  }, [activeUserId]);
 
   const handleChange = (event) => {
     const textareaLineHeight = 24;
@@ -34,6 +40,7 @@ export default function ({ text, setText }) {
       placeholder={"Enter your text here..."}
       className={styles.textarea}
       onChange={handleChange}
+      ref={inputRef}
     />
   );
 }

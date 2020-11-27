@@ -4,13 +4,8 @@ import styles from "./ChatWindow.module.css";
 import { Button } from "monday-ui-react-core";
 import Update from "monday-ui-react-core/dist/icons/Update";
 
-export default function ({ currentUserId, activeUserId, sendMessage }) {
+export default function ({ monday, currentUserId, activeUserId, sendMessage }) {
   const [text, setText] = useState("");
-
-  // not ready yet
-  if (!activeUserId || !currentUserId) {
-    return <div></div>;
-  }
 
   // user can send on click
   const clickHandler = (e) => {
@@ -23,6 +18,7 @@ export default function ({ currentUserId, activeUserId, sendMessage }) {
   useEffect(() => {
     const keyHandler = (event) => {
       if (event.key === "Enter") {
+        event.preventDefault();
         sendMessage(currentUserId, activeUserId, text);
         setText("");
       }
@@ -33,10 +29,19 @@ export default function ({ currentUserId, activeUserId, sendMessage }) {
     };
   }, [currentUserId, activeUserId, text, sendMessage]);
 
+  // not ready yet
+  if (!activeUserId || !currentUserId) {
+    return <div></div>;
+  }
+
   return (
     <div className={styles.chatWindow}>
       <div className={styles.chat}>
-        <ResizeableTextarea text={text} setText={setText} />
+        <ResizeableTextarea
+          text={text}
+          setText={setText}
+          activeUserId={activeUserId}
+        />
         <Button onClick={clickHandler}>
           Send
           <Update style={{ paddingLeft: "4px" }} />

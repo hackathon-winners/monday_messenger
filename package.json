@@ -19,7 +19,8 @@
     "monday-ui-react-core": "0.0.30",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
-    "react-scripts": "3.4.0"
+    "react-scripts": "3.4.0",
+    "uuid": "^8.3.1"
   },
   "eslintConfig": {
     "extends": "react-app"
