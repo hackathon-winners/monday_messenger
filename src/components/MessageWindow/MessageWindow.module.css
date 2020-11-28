@@ -3,3 +3,23 @@
   overflow-y: auto;
   padding: 8px;
 }
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.empty h2 {
+  font-size: 32px;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+
+.empty p {
+  color: #111;
+  font-size: 15px;
+  font-weight: 300;
+  max-width: 290px;
+}

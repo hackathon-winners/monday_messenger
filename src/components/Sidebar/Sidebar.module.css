@@ -4,66 +4,49 @@
   flex-direction: column;
   width: 400px;
   padding: 8px;
-
-  height: 95%;
+  height: 100%;
 }
 
 .userlist {
   padding-top: 8px;
-}
-.person {
   display: flex;
-  align-items: center;
-  padding: 8px 8px;
-  border-bottom: 1px solid #eee;
-  border-radius: 3px;
-
-  cursor: pointer;
-}
-.person:hover,
-.active {
-  background: #eee;
-}
-
-.usernameContainer {
-  display: flex;
-  flex: 1;
   flex-direction: column;
-  justify-content: center;
-  line-height: 18px;
-  margin-left: 8px;
-
-  max-width: calc(100% - 56px);
-}
-
-.personName {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  color: var(--primary-text-color);
-}
-
-.lastMessage {
-  color: #777;
-  font-size: 0.9rem;
-  line-height: 32px;
-  display: flex;
+  flex: 1;
   justify-content: space-between;
 }
 
-.lastMessage span {
-  text-overflow: ellipsis;
-  /* Required for text-overflow to do anything */
-  white-space: nowrap;
-  overflow: hidden;
+.notification {
+  padding: 8px;
+  text-align: center;
 }
 
-.menuButton {
-  opacity: 0;
-  transition: all 50ms ease-in;
-  transition-property: opacity;
+.notification p {
+  line-height: 24px;
+  padding: 8px;
 }
 
-.person:hover .menuButton {
-  opacity: 1;
+.notification svg {
+  margin-bottom: -4px;
+}
+
+.background {
+  background: #eee;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.left {
+  text-align: left;
+}
+.right {
+  text-align: right;
+}
+.notHeader {
+  text-align: left;
+  padding: 0;
+}
+
+.notHeader svg {
+  float: right;
+  cursor: pointer;
 }

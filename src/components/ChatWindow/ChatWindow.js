@@ -22,6 +22,7 @@ export default function ({
     e.preventDefault();
     sendMessage(currentUserId, activeUserId, text, context);
     setText("");
+    setShowEmoji(false);
   };
 
   // user can send on click

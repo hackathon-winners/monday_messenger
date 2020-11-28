@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { Search, Counter, MenuButton } from "monday-ui-react-core";
-import DropdownChevronDown from "monday-ui-react-core/dist/icons/DropdownChevronDown";
+import { Search } from "monday-ui-react-core";
+import Invite from "monday-ui-react-core/dist/icons/Invite";
+import Show from "monday-ui-react-core/dist/icons/Show";
+import Hide from "monday-ui-react-core/dist/icons/Hide";
 
 import styles from "./Sidebar.module.css";
-import { dateformatter } from "../../helper/date";
-import PersonThumb from "../PersonThumb/PersonThumb";
-import Overlay from "../Overlay/Overlay";
+import Person from "../Person/Person";
+
+import conersationStarter from "./conversation_starter.json";
+import { useLocalStorage } from "../../helper/hooks";
 
 export default function ({
   allUsers,
   activeChats,
   listedChats,
   setListedChats,
-  getPersonById,
   activeUserId,
   setActiveUserId,
   makeUnread,
 }) {
   const [search, setSearch] = useState();
+  const [
+    showConversationStarters,
+    setShowConversationStarters,
+  ] = useLocalStorage("show_conversation_starters", true);
   // you search for all users
   const handleSearch = (activeChats, searchTerm) => {
     setSearch(searchTerm);
@@ -68,80 +74,84 @@ export default function ({
     return <div className={styles.sidebar}></div>;
   }
 
+  const randomConversation =
+    conersationStarter[Math.floor(Math.random() * conersationStarter.length)];
+
   return (
     <div className={styles.sidebar}>
       <Search
         iconName="icon-v2-search"
         onChange={(searchTerm) => handleSearch(activeChats, searchTerm)}
-        placeholder="Enter Person to talk to"
+        placeholder="Enter Name"
       />
       <nav className={styles.userlist}>
-        {listedChatsSorted && listedChatsSorted.length === 0 && (
-          <div>No Chats yet</div>
+        {search && listedChatsSorted && listedChatsSorted.length === 0 && (
+          <div className={styles.notification}>
+            <p>
+              Oh no, we couldn't find a user for <strong>{search}</strong>...
+            </p>
+            <p className={styles.background}>
+              You can also invite a new person by clicking on the <Invite />{" "}
+              Icon on bottom left.
+            </p>
+          </div>
         )}
-        {listedChatsSorted &&
-          listedChatsSorted.map((userObj) => {
-            // get user
-            const user = getPersonById(allUsers, userObj.userId);
-
-            if (!user) {
-              return <></>;
-            }
-            return (
-              <div
-                key={user.id}
-                className={`${styles.person} ${
-                  activeUserId === user.id && styles.active
-                }`}
-                onClick={(e) => selectChatHandler(userObj, e)}>
-                <PersonThumb user={user} />
-                <div className={styles.usernameContainer}>
-                  <div className={styles.personName}>
-                    {userObj.type === "unread" && <strong>{user.name}</strong>}
-                    {userObj.type !== "unread" && <span>{user.name}</span>}
-                    {userObj.last_seen_at && (
-                      <>
-                        <small>
-                          {dateformatter(userObj.last_seen_at, "date")}
-                        </small>
-                      </>
-                    )}
-                  </div>
-                  <div className={styles.lastMessage}>
-                    {userObj.type === "unread" && (
-                      <>
-                        <strong>{userObj.last_message}</strong>
-                        <div>
-                          <Counter
-                            color={Counter.colors.NEGATIVE}
-                            count={1}
-                            size={Counter.sizes.SMALL}
-                            maxDigits={1}
-                          />
-                          <MenuButton
-                            component={DropdownChevronDown}
-                            ariaLabel={"chevron menu icon menu button"}>
-                            <Overlay />
-                          </MenuButton>
-                        </div>
-                      </>
-                    )}
-                    {userObj.type !== "unread" && (
-                      <>
-                        <span>{userObj.last_message}</span>
-                        <MenuButton
-                          componentClassName={styles.menuButton}
-                          component={DropdownChevronDown}
-                          ariaLabel={"chevron menu icon menu button"}>
-                          <Overlay />
-                        </MenuButton>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        {!search && listedChatsSorted && listedChatsSorted.length === 0 && (
+          <div className={styles.notification}>
+            <p>You don't have any active Chats yet.</p>
+            <p className={`${styles.left}`}>
+              <strong>Maybe talk to your latest team members?</strong>
+            </p>
+            {allUsers &&
+              allUsers
+                .sort((a, b) => a.join_date - b.join_date)
+                .slice(0, 3)
+                .map((user) => {
+                  const userObj = { userId: user.id };
+                  return (
+                    <Person
+                      key={userObj.userId}
+                      userObj={userObj}
+                      activeUserId={activeUserId}
+                      allUsers={allUsers}
+                      selectChatHandler={selectChatHandler}
+                    />
+                  );
+                })}
+          </div>
+        )}
+        <div>
+          {listedChatsSorted &&
+            listedChatsSorted.map((userObj) => {
+              return (
+                <Person
+                  key={userObj.userId}
+                  userObj={userObj}
+                  activeUserId={activeUserId}
+                  allUsers={allUsers}
+                  selectChatHandler={selectChatHandler}
+                />
+              );
+            })}
+        </div>
+        {showConversationStarters && (
+          <div className={styles.notification}>
+            <p className={styles.notHeader}>
+              You are not sure what to say? How about{" "}
+              <Hide onClick={() => setShowConversationStarters(false)} />
+            </p>
+            <p className={`${styles.background} ${styles.left}`}>
+              <strong>{randomConversation.question}</strong>
+              <br />
+              {randomConversation.info}
+            </p>
+          </div>
+        )}
+        {!showConversationStarters && (
+          <div className={`${styles.notification} ${styles.right}`}>
+            <Show onClick={() => setShowConversationStarters(true)} />
+          </div>
+        )}
       </nav>
     </div>
   );

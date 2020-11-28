@@ -1,8 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import styles from "./MessageWindow.module.css";
 import Message from "../Message/Message";
+import rocks from "./rocks.png";
+import { getPersonById } from "../../helper/api.js";
 
-export default function ({ allUsers, messages, getPersonById }) {
+export default function ({ allUsers, activeUserId, messages }) {
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -16,6 +18,13 @@ export default function ({ allUsers, messages, getPersonById }) {
 
   return (
     <div className={styles.messageWindow}>
+      {(!messages || messages.length === 0) && (
+        <div className={styles.empty}>
+          <img src={rocks} />
+          <h2>Let's have a Chat!</h2>
+          <p>Sit back and enjoy this place for joyful conversations.</p>
+        </div>
+      )}
       {messagesSorted &&
         messagesSorted.map((msg, index) => (
           <Message
