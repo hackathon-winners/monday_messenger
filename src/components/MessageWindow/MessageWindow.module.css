@@ -23,3 +23,22 @@
   font-weight: 300;
   max-width: 290px;
 }
+
+.dateSeperator {
+  margin: 8px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) calc(50% - 1px),
+    #eee calc(50%),
+    rgba(0, 0, 0, 0) calc(50% + 1px)
+  );
+}
+
+.dateSeperator small {
+  background: #eee;
+  padding: 2px 4px;
+  border-radius: 4px;
+}

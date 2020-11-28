@@ -27,7 +27,8 @@ export default function ({
       className={`${styles.person} ${
         activeUserId === user.id && styles.active
       }`}
-      onClick={(e) => selectChatHandler(userObj, e)}>
+      onClick={(e) => selectChatHandler(userObj, e)}
+      tabIndex={1}>
       <PersonThumb user={user} />
       <div className={styles.usernameContainer}>
         <div className={styles.personName}>

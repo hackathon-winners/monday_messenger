@@ -3,6 +3,7 @@ import styles from "./MessageWindow.module.css";
 import Message from "../Message/Message";
 import rocks from "./rocks.png";
 import { getPersonById } from "../../helper/api.js";
+import { dateformatter, sameDay } from "../../helper/date";
 
 export default function ({ allUsers, activeUserId, messages }) {
   const messagesEndRef = useRef(null);
@@ -25,6 +26,7 @@ export default function ({ allUsers, activeUserId, messages }) {
           <p>Sit back and enjoy this place for joyful conversations.</p>
         </div>
       )}
+
       {messagesSorted &&
         messagesSorted.map((msg, index) => (
           <Message
@@ -34,8 +36,18 @@ export default function ({ allUsers, activeUserId, messages }) {
             discussionChange={
               index === 0 ||
               (index && msg.from !== messagesSorted[index - 1].from)
-            }
-          />
+            }>
+            {(index === 0 ||
+              (index &&
+                !sameDay(
+                  msg.created_at,
+                  messagesSorted[index - 1].created_at
+                ))) && (
+              <div className={styles.dateSeperator}>
+                <small>{dateformatter(msg.created_at, "date")}</small>
+              </div>
+            )}
+          </Message>
         ))}
       <div ref={messagesEndRef} />
     </div>
