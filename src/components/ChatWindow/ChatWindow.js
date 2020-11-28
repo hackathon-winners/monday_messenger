@@ -7,13 +7,15 @@ import GiphySearch from "../GiphySearch/GiphySearch";
 
 import Picker from "emoji-picker-react";
 
+import { useLocalStorage } from "../../helper/hooks";
+
 export default function ({
   currentUserId,
   activeUserId,
   sendMessage,
   context,
 }) {
-  const [text, setText] = useState("");
+  const [text, setText] = useLocalStorage(activeUserId, "");
   const [showGiphy, setShowGiphy] = useState(false);
   const [showEmoji, setShowEmoji] = useState(false);
 
@@ -33,6 +35,15 @@ export default function ({
   const onEmojiClick = (event, emojiObject) => {
     setText((prev) => prev + emojiObject.emoji);
   };
+
+  // Store User messages drafts in localstorage
+  useEffect(() => {
+    const item = window.localStorage.getItem(activeUserId);
+    if (item) {
+      const parsed = JSON.parse(item);
+      setText(parsed);
+    }
+  }, [activeUserId, setText]);
 
   // she can also send the message when Enter is pressed
   useEffect(() => {

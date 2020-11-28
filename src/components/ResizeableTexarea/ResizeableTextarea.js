@@ -37,7 +37,7 @@ export default function ({ text, setText, activeUserId }) {
     <textarea
       rows={rows}
       value={text}
-      placeholder={"Enter your text here..."}
+      placeholder={"Enter your message..."}
       className={styles.textarea}
       onChange={handleChange}
       ref={inputRef}

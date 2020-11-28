@@ -46,7 +46,11 @@
   padding: 0;
 }
 
-.notHeader svg {
+.notification svg {
   float: right;
   cursor: pointer;
+}
+.notification small {
+  margin-top: -8px;
+  float: right;
 }

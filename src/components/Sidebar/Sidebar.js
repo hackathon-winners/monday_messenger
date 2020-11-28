@@ -145,6 +145,14 @@ export default function ({
               <br />
               {randomConversation.info}
             </p>
+            <small>
+              source{" "}
+              <a
+                href="https://conversationstartersworld.com/250-conversation-starters/"
+                target="_blank">
+                conversationstartersworld.com
+              </a>
+            </small>
           </div>
         )}
         {!showConversationStarters && (
