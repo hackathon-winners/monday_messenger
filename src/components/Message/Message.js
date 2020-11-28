@@ -9,7 +9,6 @@ export default function ({
   discussionChange = false,
   children,
 }) {
-  console.log(children);
   if (discussionChange) {
     return (
       <>

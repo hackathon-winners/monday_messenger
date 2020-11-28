@@ -30,7 +30,7 @@ export default function () {
 
   // Chat Partner specifics
   const [activeUserId, setActiveUserId] = useLocalStorage("activeUserId", null);
-  const [activeMessages, setActiveMessages] = useState();
+  const [activeMessages, setActiveMessages] = useState([]);
 
   useEffect(() => {
     // get context
@@ -76,7 +76,6 @@ export default function () {
     }
     // we don't need to hurry for this list
     const interval = setInterval(() => {
-      console.log("Update Chat List");
       loadActiveChatsHandler(currentUser.id);
     }, 28000);
 
@@ -92,7 +91,6 @@ export default function () {
     }
 
     const interval = setInterval(() => {
-      console.log("Update Message List");
       loadMessages(monday, currentUser.id, activeUserId).then((response) =>
         setActiveMessages(response)
       );
@@ -128,7 +126,6 @@ export default function () {
       key: `${currentUser.id}_unread`,
       userId: userId,
     }).then((res) => {
-      console.log(res);
       loadActiveChatsHandler(userId);
     });
   };

@@ -85,10 +85,6 @@ export const sendMessage = async ({
   // and set it to storage
   await monday.storage.instance.setItem(storageKey, messageString);
 
-  console.log("current user send", currentUserId);
-  console.log("active user send", activeUserId);
-  console.log("text", messageText);
-
   // we make sure that the activeChat List of the user contains the Object
   updateList({
     monday,
@@ -119,17 +115,17 @@ export const sendMessage = async ({
   // - OR
   // -- the last message was sent by us more than 1hs ago
   if (context.instanceId > 0) {
-    monday
-      .api(
-        `mutation {
-        create_notification (user_id: ${activeUserId}, target_id: ${context.instanceId}, text: "Xou got a message", target_type: Project) {
-          text
-        }
-      }`
-      )
-      .then((res) => {
-        console.log(res);
-      });
+    // monday
+    //   .api(
+    //     `mutation {
+    //     create_notification (user_id: ${activeUserId}, target_id: ${context.instanceId}, text: "Xou got a message", target_type: Project) {
+    //       text
+    //     }
+    //   }`
+    //   )
+    //   .then((res) => {
+    //     console.log(res);
+    //   });
   }
 
   // load all messages
@@ -193,8 +189,6 @@ export const removeFromList = async ({ monday, key, userId }) => {
 
   let chats = JSON.parse(chatsRaw.data.value);
 
-  console.log(chats);
-
   if (!chats) {
     return;
   }
@@ -205,8 +199,6 @@ export const removeFromList = async ({ monday, key, userId }) => {
       chatlistWithoutChat.push(chats[i]);
     }
   }
-
-  console.log(chatlistWithoutChat);
 
   return monday.storage.instance.setItem(
     key,

@@ -5,50 +5,48 @@ import rocks from "./rocks.png";
 import { getPersonById } from "../../helper/api.js";
 import { dateformatter, sameDay } from "../../helper/date";
 
-export default function ({ allUsers, activeUserId, messages }) {
+export default function ({ allUsers, messages }) {
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current.scrollIntoView(false);
   };
 
-  useEffect(scrollToBottom, [messages]);
+  useEffect(scrollToBottom, [messages.length]);
 
-  const messagesSorted =
-    messages && messages.sort((a, b) => a.created_at - b.created_at);
+  const messagesSorted = messages.sort((a, b) => a.created_at - b.created_at);
 
   return (
     <div className={styles.messageWindow}>
-      {(!messages || messages.length === 0) && (
+      {messages.length === 0 && (
         <div className={styles.empty}>
-          <img src={rocks} />
+          <img src={rocks} alt="white rocks with circle background" />
           <h2>Let's have a Chat!</h2>
           <p>Sit back and enjoy this place for joyful conversations.</p>
         </div>
       )}
 
-      {messagesSorted &&
-        messagesSorted.map((msg, index) => (
-          <Message
-            key={msg.id}
-            user={getPersonById(allUsers, msg.from)}
-            message={msg}
-            discussionChange={
-              index === 0 ||
-              (index && msg.from !== messagesSorted[index - 1].from)
-            }>
-            {(index === 0 ||
-              (index &&
-                !sameDay(
-                  msg.created_at,
-                  messagesSorted[index - 1].created_at
-                ))) && (
-              <div className={styles.dateSeperator}>
-                <small>{dateformatter(msg.created_at, "date")}</small>
-              </div>
-            )}
-          </Message>
-        ))}
+      {messagesSorted.map((msg, index) => (
+        <Message
+          key={msg.id}
+          user={getPersonById(allUsers, msg.from)}
+          message={msg}
+          discussionChange={
+            index === 0 ||
+            (index && msg.from !== messagesSorted[index - 1].from)
+          }>
+          {(index === 0 ||
+            (index &&
+              !sameDay(
+                msg.created_at,
+                messagesSorted[index - 1].created_at
+              ))) && (
+            <div className={styles.dateSeperator}>
+              <small>{dateformatter(msg.created_at, "date")}</small>
+            </div>
+          )}
+        </Message>
+      ))}
       <div ref={messagesEndRef} />
     </div>
   );

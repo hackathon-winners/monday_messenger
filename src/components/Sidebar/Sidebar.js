@@ -149,7 +149,8 @@ export default function ({
               source{" "}
               <a
                 href="https://conversationstartersworld.com/250-conversation-starters/"
-                target="_blank">
+                target="_blank"
+                rel="noopener noreferrer">
                 conversationstartersworld.com
               </a>
             </small>
