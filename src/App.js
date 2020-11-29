@@ -144,7 +144,7 @@ export default function () {
         userId: userId,
       })
       .then((res) => {
-        loadActiveChatsHandler(userId);
+        loadActiveChatsHandler(currentUser.id);
       });
   };
   /**
@@ -159,7 +159,7 @@ export default function () {
         userId: userId,
       })
       .then((res) => {
-        loadActiveChatsHandler(userId);
+        loadActiveChatsHandler(currentUser.id);
       });
   };
 

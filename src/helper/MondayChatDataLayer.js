@@ -223,7 +223,7 @@ class MondayChatDataLayer {
    * @return  {Promise}         Return Monday API promise
    */
   async toggleChannelUnread({ currentUserId, userId }) {
-    const storageKey = `cchat_${userId}_active`;
+    const storageKey = `cchat_${currentUserId}_active`;
     const chatsRaw = await this.monday.storage.instance.getItem(storageKey);
 
     let chats = JSON.parse(chatsRaw.data.value);
@@ -232,7 +232,7 @@ class MondayChatDataLayer {
       chats = [];
     }
     for (let i = 0; i < chats.length; i++) {
-      if (chats[i].userId === currentUserId) {
+      if (chats[i].userId === userId) {
         chats[i].type = chats[i].type === "unread" ? "active" : "unread";
       }
     }
