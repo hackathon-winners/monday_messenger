@@ -16,6 +16,7 @@ export default function ({
   userObj,
   activeUserId,
   selectChatHandler,
+  toggleMuteHandle,
 }) {
   const user = MondayChatDataLayer.getPersonById(allUsers, userObj.userId);
 
@@ -52,11 +53,17 @@ export default function ({
                   size={Counter.sizes.SMALL}
                   maxDigits={1}
                 />
-                <MenuButton
-                  component={DropdownChevronDown}
-                  ariaLabel={"chevron menu icon menu button"}>
-                  <Overlay />
-                </MenuButton>
+                {typeof toggleMuteHandle === "function" && (
+                  <MenuButton
+                    component={DropdownChevronDown}
+                    ariaLabel={"chevron menu icon menu button"}>
+                    <Overlay
+                      mutedUserId={user.id}
+                      muted={userObj.muted}
+                      toggleMuteHandle={toggleMuteHandle}
+                    />
+                  </MenuButton>
+                )}
               </div>
             </>
           )}
@@ -67,7 +74,11 @@ export default function ({
                 componentClassName={styles.menuButton}
                 component={DropdownChevronDown}
                 ariaLabel={"chevron menu icon menu button"}>
-                <Overlay />
+                <Overlay
+                  mutedUserId={user.id}
+                  muted={userObj.muted}
+                  toggleMuteHandle={toggleMuteHandle}
+                />
               </MenuButton>
             </>
           )}

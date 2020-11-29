@@ -50,14 +50,14 @@
 }
 
 :global(.dark) .dateSeperator small {
-  background: #555;
+  background: #454d83;
 }
 
 :global(.dark) .dateSeperator {
   background: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0) calc(50% - 1px),
-    #555 calc(50%),
+    #454d83 calc(50%),
     rgba(0, 0, 0, 0) calc(50% + 1px)
   );
 }

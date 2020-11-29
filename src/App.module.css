@@ -15,7 +15,7 @@
 }
 
 :global(.dark) {
-  background: #222;
+  background: #181c35;
 }
 
 :global(.dark) div,
@@ -24,6 +24,9 @@
 :global(.dark) p,
 :global(.dark) span,
 :global(.dark) small,
-:global(.dark) a {
+:global(.dark) a,
+:global(.dark) input,
+:global(.dark) ::placeholder {
   color: white !important;
+  opacity: 1;
 }

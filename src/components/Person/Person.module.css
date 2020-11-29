@@ -38,7 +38,8 @@
   justify-content: space-between;
 }
 
-.lastMessage span {
+.lastMessage span,
+.lastMessage strong {
   text-overflow: ellipsis;
   /* Required for text-overflow to do anything */
   white-space: nowrap;
@@ -56,9 +57,9 @@
 }
 
 :global(.dark) .person {
-  border-bottom: #666 solid 1px;
+  border-bottom: #737cbb solid 1px;
 }
 :global(.dark) .person:hover,
 :global(.dark) .active {
-  background: #444;
+  background: #454d83;
 }

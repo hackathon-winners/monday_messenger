@@ -13,8 +13,8 @@ import styles from "App.module.css";
 const mdl = new MondayChatDataLayer();
 
 export default function () {
-  const [context, setContext] = useState();
-  const [isDark, setIsDark] = useState(false);
+  const [context, setContext] = useState({});
+  const [itemId, setItemId] = useState();
 
   // user specifics
   const [currentUser, setCurrentUser] = useState();
@@ -34,9 +34,17 @@ export default function () {
    * and recieve all Users for autocomplete, User Information
    *
    */
+
   useEffect(() => {
+    const contextChanger = (res) => {
+      if (res.type === "context") {
+        setContext(res.data);
+      } else {
+        setItemId(res.data.itemId);
+      }
+    };
     // get the context
-    mdl.getContext(setContext);
+    mdl.listenToChanges(contextChanger);
     // get all Users + current User
     mdl.getUserAndAllUsers().then((res) => {
       // we set the loggedin user
@@ -48,23 +56,11 @@ export default function () {
 
   /**
    *
-   * First Actions are getting context, get loggedin user
-   * and recieve all Users for autocomplete, User Information
-   *
-   */
-  useEffect(() => {
-    if (context && context.theme !== "light") {
-      setIsDark(true);
-    }
-  }, [context]);
-
-  /**
-   *
    * Next up if we have the loggedin User we load the active
    * Chats as well as starting the Update Timer when messages
    * are incoming.
    *
-   * It only updates all 28 seconds to be nice to the API,
+   * It only updates all 12 seconds to be nice to the API,
    * can be faster but I think thats alright.
    *
    */
@@ -75,7 +71,7 @@ export default function () {
     // we don't need to hurry for this list
     const interval = setInterval(() => {
       loadActiveChatsHandler(currentUser.id);
-    }, 28000);
+    }, 12000);
 
     return () => clearInterval(interval);
   }, [currentUser]);
@@ -85,7 +81,7 @@ export default function () {
    * Next up we load the messages of the active Chat window we
    * have open and start the Update Timer for this window.
    *
-   * Here we load every 8th second, because messages should return quicker.
+   * Here we load every 6th second, because messages should return quicker.
    *
    */
   useEffect(() => {
@@ -99,7 +95,7 @@ export default function () {
       mdl
         .loadMessages(currentUser.id, activeUserId)
         .then((response) => setActiveMessages(response));
-    }, 8000);
+    }, 6000);
 
     return () => clearInterval(interval);
   }, [activeUserId, currentUser]);
@@ -109,11 +105,14 @@ export default function () {
    * Function to load active Chats
    *
    */
-  const loadActiveChatsHandler = async (userId) => {
+  const loadActiveChatsHandler = async (userId, searchTerm) => {
     const chatsArray = await mdl.loadActiveChats(userId);
     // put messages into state
     setActiveChats(chatsArray);
-    setListedChats(chatsArray);
+
+    if (searchTerm === "") {
+      setListedChats(chatsArray);
+    }
   };
 
   /**
@@ -121,11 +120,10 @@ export default function () {
    * Function to send Message
    *
    */
-  const sendMessageHandler = (currentUserId, activeUserId, text, context) => {
+  const sendMessageHandler = (currentUserId, activeUserId, text) => {
     if (text) {
       mdl
         .sendMessage({
-          context,
           currentUserId,
           activeUserId,
           messageText: text,
@@ -142,7 +140,22 @@ export default function () {
   const makeUnreadHandler = (userId) => {
     mdl
       .removeFromList({
-        key: `${currentUser.id}_unread`,
+        currentUserId: currentUser.id,
+        userId: userId,
+      })
+      .then((res) => {
+        loadActiveChatsHandler(userId);
+      });
+  };
+  /**
+   *
+   * Function to mute channel
+   *
+   */
+  const toggleMuteHandle = (userId) => {
+    mdl
+      .toggleMuteChannel({
+        currentUserId: currentUser.id,
         userId: userId,
       })
       .then((res) => {
@@ -156,7 +169,7 @@ export default function () {
    *
    */
   return (
-    <div className={`${styles.App} ${isDark && "dark"}`}>
+    <div className={`${styles.App} ${context.theme !== "light" && "dark"}`}>
       <div className={styles.sidebar}>
         <Sidebar
           activeChats={activeChats}
@@ -166,6 +179,7 @@ export default function () {
           activeUserId={activeUserId}
           setActiveUserId={setActiveUserId}
           makeUnread={makeUnreadHandler}
+          toggleMute={toggleMuteHandle}
         />
       </div>
       <div className={styles.main}>
@@ -176,10 +190,10 @@ export default function () {
         />
         {currentUser && (
           <ChatWindow
-            context={context}
             sendMessage={sendMessageHandler}
             currentUserId={currentUser.id}
             activeUserId={activeUserId}
+            itemId={itemId}
           />
         )}
       </div>

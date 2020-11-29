@@ -52,10 +52,10 @@ class MondayChatDataLayer {
    *
    * @return  {void}
    */
-  getContext(callback) {
+  listenToChanges(callback) {
     // get context
-    this.monday.listen("context", (res) => {
-      callback(res.data);
+    this.monday.listen(["context", "settings"], (res) => {
+      callback(res);
     });
   }
   /**
@@ -78,8 +78,8 @@ class MondayChatDataLayer {
    * @return  {Array}          List of all active Chats (active/unread)
    */
   async loadActiveChats(userId) {
-    const storageKeyActive = `${userId}_active`;
-    const storageKeyUnread = `${userId}_unread`;
+    const storageKeyActive = `cchat_${userId}_active`;
+    const storageKeyUnread = `cchat_${userId}_unread`;
 
     // we load parallel for faster loading
     const promises = [];
@@ -115,9 +115,11 @@ class MondayChatDataLayer {
     // we load parallel for faster loading
     const promises = [];
 
-    promises.push(this.monday.storage.instance.getItem(`${from}_${to}`));
+    promises.push(this.monday.storage.instance.getItem(`cchat_${from}_${to}`));
     if (from !== to) {
-      promises.push(this.monday.storage.instance.getItem(`${to}_${from}`));
+      promises.push(
+        this.monday.storage.instance.getItem(`cchat_${to}_${from}`)
+      );
     }
 
     // we wait for both promises to get a full message list
@@ -145,13 +147,13 @@ class MondayChatDataLayer {
    * @return  {[type]}  [return description]
    */
   async sendMessage({
-    context,
     currentUserId,
     activeUserId,
     messageText,
     setActiveChats,
+    itemId,
   }) {
-    const storageKey = `${currentUserId}_${activeUserId}`;
+    const storageKey = `cchat_${currentUserId}_${activeUserId}`;
 
     let messageContainer = [];
 
@@ -181,7 +183,7 @@ class MondayChatDataLayer {
 
     // we make sure that the activeChat List of the user contains the Object
     this.updateList({
-      key: `${currentUserId}_active`,
+      key: `cchat_${currentUserId}_active`,
       userId: activeUserId,
       message: messageText,
       type: "active",
@@ -192,7 +194,7 @@ class MondayChatDataLayer {
     // as promise for speed
     if (activeUserId !== currentUserId) {
       this.updateList({
-        key: `${activeUserId}_unread`,
+        key: `cchat_${activeUserId}_unread`,
         userId: currentUserId,
         message: messageText,
         type: "unread",
@@ -201,27 +203,57 @@ class MondayChatDataLayer {
 
     // Notification Logic
     // if
-    // - the channel isn't muted
+    // - we have an item ID
     // And
-    // -- the last message was not sent by us
-    // - OR
-    // -- the last message was sent by us more than 1hs ago
-    if (context.instanceId > 0) {
-      this.monday
-        .api(
-          `mutation {
-          create_notification (user_id: ${activeUserId}, target_id: 879454657, text: "You just got a message!", target_type: Project) {
-            text
-          }
-        }`
-        )
-        .then((res) => {
-          console.log(res);
-        });
+    // - the channel was not muted
+    if (itemId > 0) {
+      this.loadMutedChats(currentUserId).then((isMutedArray) => {
+        if (!isMutedArray.includes(activeUserId)) {
+          this.monday
+            .api(
+              `mutation {
+                    create_notification (user_id: ${activeUserId}, target_id: ${itemId}, text: "You just got a message!", target_type: Project) {
+                        text
+                    }
+                }`
+            )
+            .then((res) => {
+              console.log(res);
+            });
+        }
+      });
     }
 
     // load all messages
     return this.loadMessages(currentUserId, activeUserId);
+  }
+
+  /**
+   * Mute a Channel
+   *
+   * @param   {String}  key     Storage Key
+   * @param   {Int}  userId     UserId that owns that List
+   *
+   * @return  {Promise}         Return Monday API promise
+   */
+  async toggleMuteChannel({ currentUserId, userId }) {
+    const storageKey = `cchat_${currentUserId}_active`;
+    const chatsRaw = await this.monday.storage.instance.getItem(storageKey);
+
+    let chats = JSON.parse(chatsRaw.data.value);
+
+    if (!chats) {
+      chats = [];
+    }
+    for (let i = 0; i < chats.length; i++) {
+      if (chats[i].userId === userId) {
+        chats[i].muted = !chats[i].muted;
+      }
+    }
+    return this.monday.storage.instance.setItem(
+      storageKey,
+      JSON.stringify(chats)
+    );
   }
 
   /**
@@ -256,35 +288,37 @@ class MondayChatDataLayer {
     const chatsRaw = await this.monday.storage.instance.getItem(key);
 
     let chats = JSON.parse(chatsRaw.data.value);
+    let newItem = undefined;
 
     if (!chats) {
       chats = [];
     }
 
-    let chatAlreadyExisted = false;
     for (let i = 0; i < chats.length; i++) {
       if (chats[i].userId === userId) {
         chats[i].last_seen_at = Date.now();
         chats[i].last_message = message;
 
         // we set the flag
-        chatAlreadyExisted = true;
+        newItem = { ...chats[i] };
       }
     }
-    if (!chatAlreadyExisted) {
-      chats.push({
+    if (!newItem) {
+      newItem = {
         userId: userId,
         last_seen_at: Date.now(),
         last_message: message,
         type: type,
-      });
+      };
+      chats.push(newItem);
     }
 
     setActiveChats(chats);
 
     this.monday.storage.instance.setItem(key, JSON.stringify(chats));
 
-    return chats;
+    // return new/updated Item
+    return newItem;
   }
 
   /**
@@ -295,8 +329,9 @@ class MondayChatDataLayer {
    *
    * @return  {Promise}         Return Monday API promise
    */
-  async removeFromList({ key, userId }) {
-    const chatsRaw = await this.monday.storage.instance.getItem(key);
+  async removeFromList({ currentUserId, userId }) {
+    const storageKey = `cchat_${currentUserId}_unread`;
+    const chatsRaw = await this.monday.storage.instance.getItem(storageKey);
 
     let chats = JSON.parse(chatsRaw.data.value);
 
@@ -312,7 +347,7 @@ class MondayChatDataLayer {
     }
 
     return this.monday.storage.instance.setItem(
-      key,
+      storageKey,
       JSON.stringify(chatlistWithoutChat)
     );
   }

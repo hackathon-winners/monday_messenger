@@ -18,12 +18,16 @@ export default function ({
   activeUserId,
   setActiveUserId,
   makeUnread,
+  toggleMute,
 }) {
   const [search, setSearch] = useState();
+
+  const [conversation, setConversation] = useState();
   const [
     showConversationStarters,
     setShowConversationStarters,
   ] = useLocalStorage("show_conversation_starters", true);
+
   // you search for all users
   const handleSearch = (activeChats, searchTerm) => {
     setSearch(searchTerm);
@@ -57,6 +61,12 @@ export default function ({
   };
 
   useEffect(() => {
+    const randomConversation =
+      conersationStarter[Math.floor(Math.random() * conersationStarter.length)];
+    setConversation(randomConversation);
+  }, []);
+
+  useEffect(() => {
     if (
       !search &&
       JSON.stringify(activeChats) !== JSON.stringify(listedChats)
@@ -73,9 +83,6 @@ export default function ({
   if (!allUsers) {
     return <div className={styles.sidebar}></div>;
   }
-
-  const randomConversation =
-    conersationStarter[Math.floor(Math.random() * conersationStarter.length)];
 
   return (
     <div className={styles.sidebar}>
@@ -115,6 +122,7 @@ export default function ({
                       activeUserId={activeUserId}
                       allUsers={allUsers}
                       selectChatHandler={selectChatHandler}
+                      toggleMuteHandle={!search ? toggleMute : undefined}
                     />
                   );
                 })}
@@ -130,6 +138,7 @@ export default function ({
                   activeUserId={activeUserId}
                   allUsers={allUsers}
                   selectChatHandler={selectChatHandler}
+                  toggleMuteHandle={!search ? toggleMute : undefined}
                 />
               );
             })}
@@ -141,9 +150,9 @@ export default function ({
               <Hide onClick={() => setShowConversationStarters(false)} />
             </p>
             <p className={`${styles.background} ${styles.left}`}>
-              <strong>{randomConversation.question}</strong>
+              <strong>{conversation.question}</strong>
               <br />
-              {randomConversation.info}
+              {conversation.info}
             </p>
             <small>
               source{" "}

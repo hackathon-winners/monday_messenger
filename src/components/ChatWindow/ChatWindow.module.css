@@ -29,7 +29,7 @@
 }
 
 :global(.dark) .chat {
-  border-color: #555;
+  border-color: #454d83;
 }
 
 :global(.dark) button {

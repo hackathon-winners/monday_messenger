@@ -10,12 +10,7 @@ import { useLocalStorage } from "helper/hooks";
 
 import styles from "./ChatWindow.module.css";
 
-export default function ({
-  currentUserId,
-  activeUserId,
-  sendMessage,
-  context,
-}) {
+export default function ({ currentUserId, activeUserId, sendMessage, itemId }) {
   const [text, setText] = useLocalStorage(activeUserId, "");
   const [showGiphy, setShowGiphy] = useState(false);
   const [showEmoji, setShowEmoji] = useState(false);
@@ -23,18 +18,20 @@ export default function ({
   // user can send on click
   const clickHandler = (e) => {
     e.preventDefault();
-    sendMessage(currentUserId, activeUserId, text, context);
+    sendMessage(currentUserId, activeUserId, text, itemId);
     setText("");
     setShowEmoji(false);
   };
 
   // user can send on click
   const giphyHandler = (gif) => {
-    sendMessage(currentUserId, activeUserId, gif.images.downsized.url, context);
+    sendMessage(currentUserId, activeUserId, gif.images.downsized.url, itemId);
+    setShowGiphy(false);
   };
 
   const onEmojiClick = (event, emojiObject) => {
     setText((prev) => prev + emojiObject.emoji);
+    setShowEmoji(false);
   };
 
   // Store User messages drafts in localstorage
@@ -51,15 +48,16 @@ export default function ({
     const keyHandler = (event) => {
       if (event.key === "Enter") {
         event.preventDefault();
-        sendMessage(currentUserId, activeUserId, text, context);
+        sendMessage(currentUserId, activeUserId, text, itemId);
         setText("");
+        setShowEmoji(false);
       }
     };
     document.addEventListener("keydown", keyHandler, false);
     return () => {
       document.removeEventListener("keydown", keyHandler, false);
     };
-  }, [currentUserId, activeUserId, text, sendMessage, context, setText]);
+  }, [currentUserId, activeUserId, text, sendMessage, setText, itemId]);
 
   // not ready yet
   if (!activeUserId || !currentUserId) {
