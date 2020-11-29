@@ -79,6 +79,8 @@ Some general principles:
 
 ![System Diagram of Data flows](/docs/arch1.png)
 
+To avoid data corruption i designed writing processes in a way, that only one entity is allowed to write on a key_value store. Only the unread chat container of people can be written to by multiple people. If the event that two different entities are written on the list at the same time, no message will be lost, just an unread status might be lost which will be updated for the next message nevertheless.
+
 ![System Diagram of Data flows](/docs/arch2.png)
 
 ![System Diagram of Data flows](/docs/arch3.png)

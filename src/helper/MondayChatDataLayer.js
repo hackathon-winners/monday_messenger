@@ -207,17 +207,17 @@ class MondayChatDataLayer {
     // - OR
     // -- the last message was sent by us more than 1hs ago
     if (context.instanceId > 0) {
-      // monday
-      //   .api(
-      //     `mutation {
-      //     create_notification (user_id: ${activeUserId}, target_id: ${context.instanceId}, text: "Xou got a message", target_type: Project) {
-      //       text
-      //     }
-      //   }`
-      //   )
-      //   .then((res) => {
-      //     console.log(res);
-      //   });
+      this.monday
+        .api(
+          `mutation {
+          create_notification (user_id: ${activeUserId}, target_id: 879454657, text: "You just got a message!", target_type: Project) {
+            text
+          }
+        }`
+        )
+        .then((res) => {
+          console.log(res);
+        });
     }
 
     // load all messages
@@ -250,7 +250,7 @@ class MondayChatDataLayer {
    * @param   {String}  type            Type of conversation (active/unread)
    * @param   {func}  setActiveChats  Callback that recieves the updated List
    *
-   * @return  {Promise}                  monday api update promise
+   * @return  {Array}                  All the chats
    */
   async updateList({ key, userId, message, type, setActiveChats = (r) => {} }) {
     const chatsRaw = await this.monday.storage.instance.getItem(key);
@@ -282,7 +282,9 @@ class MondayChatDataLayer {
 
     setActiveChats(chats);
 
-    return this.monday.storage.instance.setItem(key, JSON.stringify(chats));
+    this.monday.storage.instance.setItem(key, JSON.stringify(chats));
+
+    return chats;
   }
 
   /**

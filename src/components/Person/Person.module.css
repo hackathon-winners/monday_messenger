@@ -59,6 +59,6 @@
   border-bottom: #666 solid 1px;
 }
 :global(.dark) .person:hover,
-.active {
+:global(.dark) .active {
   background: #444;
 }

@@ -53,7 +53,6 @@ export default function () {
    *
    */
   useEffect(() => {
-    console.log(context);
     if (context && context.theme !== "light") {
       setIsDark(true);
     }
