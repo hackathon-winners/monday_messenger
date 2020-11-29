@@ -79,28 +79,14 @@ class MondayChatDataLayer {
    */
   async loadActiveChats(userId) {
     const storageKeyActive = `cchat_${userId}_active`;
-    const storageKeyUnread = `cchat_${userId}_unread`;
 
-    // we load parallel for faster loading
-    const promises = [];
-
-    promises.push(this.monday.storage.instance.getItem(storageKeyUnread));
-    promises.push(this.monday.storage.instance.getItem(storageKeyActive));
-
-    // we wait for both promises to get a full message list
-    const chatsRaw = await Promise.all(promises);
-
-    const chatsArray = this.mergeStorageResults(chatsRaw);
-
-    // we remove duplicates (entry can be in unread and active)
-    // because we are handling object arrays, this is quite tedious
-    // @todo: make sure unread always comes first
-    const output = chatsArray.filter(
-      (chat, index, self) =>
-        index === self.findIndex((t) => t.userId === chat.userId)
+    const chatsRaw = await this.monday.storage.instance.getItem(
+      storageKeyActive
     );
 
-    return output;
+    const chatsArray = JSON.parse(chatsRaw.data.value);
+
+    return chatsArray;
   }
 
   /**
@@ -186,15 +172,15 @@ class MondayChatDataLayer {
       key: `cchat_${currentUserId}_active`,
       userId: activeUserId,
       message: messageText,
-      type: "active",
       setActiveChats,
+      type: "active",
     });
 
     // we add the Object to the unread List of the recieving user
     // as promise for speed
     if (activeUserId !== currentUserId) {
       this.updateList({
-        key: `cchat_${activeUserId}_unread`,
+        key: `cchat_${activeUserId}_active`,
         userId: currentUserId,
         message: messageText,
         type: "unread",
@@ -226,6 +212,34 @@ class MondayChatDataLayer {
 
     // load all messages
     return this.loadMessages(currentUserId, activeUserId);
+  }
+
+  /**
+   * Mute a Channel
+   *
+   * @param   {String}  key     Storage Key
+   * @param   {Int}  userId     UserId that owns that List
+   *
+   * @return  {Promise}         Return Monday API promise
+   */
+  async toggleChannelUnread({ currentUserId, userId }) {
+    const storageKey = `cchat_${userId}_active`;
+    const chatsRaw = await this.monday.storage.instance.getItem(storageKey);
+
+    let chats = JSON.parse(chatsRaw.data.value);
+
+    if (!chats) {
+      chats = [];
+    }
+    for (let i = 0; i < chats.length; i++) {
+      if (chats[i].userId === currentUserId) {
+        chats[i].type = chats[i].type === "unread" ? "active" : "unread";
+      }
+    }
+    return this.monday.storage.instance.setItem(
+      storageKey,
+      JSON.stringify(chats)
+    );
   }
 
   /**
@@ -298,6 +312,7 @@ class MondayChatDataLayer {
       if (chats[i].userId === userId) {
         chats[i].last_seen_at = Date.now();
         chats[i].last_message = message;
+        chats[i].type = type;
 
         // we set the flag
         newItem = { ...chats[i] };
@@ -319,37 +334,6 @@ class MondayChatDataLayer {
 
     // return new/updated Item
     return newItem;
-  }
-
-  /**
-   * Remove an Item from a List
-   *
-   * @param   {String}  key     Storage Key
-   * @param   {Int}  userId     UserId that owns that List
-   *
-   * @return  {Promise}         Return Monday API promise
-   */
-  async removeFromList({ currentUserId, userId }) {
-    const storageKey = `cchat_${currentUserId}_unread`;
-    const chatsRaw = await this.monday.storage.instance.getItem(storageKey);
-
-    let chats = JSON.parse(chatsRaw.data.value);
-
-    if (!chats) {
-      return;
-    }
-
-    const chatlistWithoutChat = [];
-    for (let i = 0; i < chats.length; i++) {
-      if (chats[i].userId !== userId) {
-        chatlistWithoutChat.push(chats[i]);
-      }
-    }
-
-    return this.monday.storage.instance.setItem(
-      storageKey,
-      JSON.stringify(chatlistWithoutChat)
-    );
   }
 }
 

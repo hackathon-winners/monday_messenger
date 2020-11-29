@@ -46,7 +46,7 @@ export default function ({
           {userObj.type === "unread" && (
             <>
               <strong>{userObj.last_message}</strong>
-              <div>
+              <div style={{ display: "flex" }}>
                 <Counter
                   color={Counter.colors.NEGATIVE}
                   count={1}

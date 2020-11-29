@@ -71,7 +71,7 @@ export default function () {
     // we don't need to hurry for this list
     const interval = setInterval(() => {
       loadActiveChatsHandler(currentUser.id);
-    }, 12000);
+    }, 6000);
 
     return () => clearInterval(interval);
   }, [currentUser]);
@@ -139,7 +139,7 @@ export default function () {
    */
   const makeUnreadHandler = (userId) => {
     mdl
-      .removeFromList({
+      .toggleChannelUnread({
         currentUserId: currentUser.id,
         userId: userId,
       })
