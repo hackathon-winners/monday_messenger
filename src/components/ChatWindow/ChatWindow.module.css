@@ -27,3 +27,14 @@
   bottom: -8px;
   left: -295px;
 }
+
+:global(.dark) .chat {
+  border-color: #555;
+}
+
+:global(.dark) button {
+  color: white;
+}
+:global(.dark) button:hover {
+  color: black;
+}

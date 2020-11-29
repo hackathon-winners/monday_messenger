@@ -1,3 +1,8 @@
+:global(.dark) .texarea {
+  color: white !important;
+  background-color: #333;
+}
+
 .textarea {
   padding: 4px 8px 8px 4px;
   border: none;

@@ -13,3 +13,17 @@
   flex-direction: column;
   flex-grow: 1;
 }
+
+:global(.dark) {
+  background: #222;
+}
+
+:global(.dark) div,
+:global(.dark) h2,
+:global(.dark) strong,
+:global(.dark) p,
+:global(.dark) span,
+:global(.dark) small,
+:global(.dark) a {
+  color: white !important;
+}

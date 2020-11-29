@@ -53,3 +53,11 @@
 .notification small {
   float: right;
 }
+
+:global(.dark) .notification .background {
+  background: #333;
+}
+
+:global(.dark) .sidebar {
+  border-color: #555;
+}

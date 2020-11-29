@@ -14,6 +14,8 @@ const mdl = new MondayChatDataLayer();
 
 export default function () {
   const [context, setContext] = useState();
+  const [isDark, setIsDark] = useState(false);
+
   // user specifics
   const [currentUser, setCurrentUser] = useState();
   const [allUsers, setAllUsers] = useState();
@@ -43,6 +45,19 @@ export default function () {
       setAllUsers(res.data.users);
     });
   }, []);
+
+  /**
+   *
+   * First Actions are getting context, get loggedin user
+   * and recieve all Users for autocomplete, User Information
+   *
+   */
+  useEffect(() => {
+    console.log(context);
+    if (context && context.theme !== "light") {
+      setIsDark(true);
+    }
+  }, [context]);
 
   /**
    *
@@ -142,7 +157,7 @@ export default function () {
    *
    */
   return (
-    <div className={styles.App}>
+    <div className={`${styles.App} ${isDark && "dark"}`}>
       <div className={styles.sidebar}>
         <Sidebar
           activeChats={activeChats}

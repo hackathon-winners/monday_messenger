@@ -48,3 +48,16 @@
   padding: 2px 4px;
   border-radius: 4px;
 }
+
+:global(.dark) .dateSeperator small {
+  background: #555;
+}
+
+:global(.dark) .dateSeperator {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) calc(50% - 1px),
+    #555 calc(50%),
+    rgba(0, 0, 0, 0) calc(50% + 1px)
+  );
+}

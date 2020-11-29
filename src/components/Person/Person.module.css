@@ -54,3 +54,11 @@
 .person:hover .menuButton {
   opacity: 1;
 }
+
+:global(.dark) .person {
+  border-bottom: #666 solid 1px;
+}
+:global(.dark) .person:hover,
+.active {
+  background: #444;
+}
