@@ -3,10 +3,11 @@ import React from "react";
 import { Counter, MenuButton } from "monday-ui-react-core";
 import DropdownChevronDown from "monday-ui-react-core/dist/icons/DropdownChevronDown";
 
-import { dateformatter } from "../../helper/date";
-import PersonThumb from "../PersonThumb/PersonThumb";
-import Overlay from "../Overlay/Overlay";
-import { getPersonById } from "../../helper/api.js";
+import PersonThumb from "components/PersonThumb/PersonThumb";
+import Overlay from "components/Overlay/Overlay";
+
+import MondayChatDataLayer from "helper/MondayChatDataLayer";
+import { dateformatter } from "helper/date";
 
 import styles from "./Person.module.css";
 
@@ -16,7 +17,7 @@ export default function ({
   activeUserId,
   selectChatHandler,
 }) {
-  const user = getPersonById(allUsers, userObj.userId);
+  const user = MondayChatDataLayer.getPersonById(allUsers, userObj.userId);
 
   if (!user) {
     return <></>;

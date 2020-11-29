@@ -1,4 +1,5 @@
 import React from "react";
+
 import styles from "./PersonThumb.module.css";
 import guestIcon from "./v2_guest_filled.svg";
 

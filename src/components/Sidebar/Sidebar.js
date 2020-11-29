@@ -4,11 +4,11 @@ import Invite from "monday-ui-react-core/dist/icons/Invite";
 import Show from "monday-ui-react-core/dist/icons/Show";
 import Hide from "monday-ui-react-core/dist/icons/Hide";
 
-import styles from "./Sidebar.module.css";
-import Person from "../Person/Person";
+import Person from "components/Person/Person";
+import { useLocalStorage } from "helper/hooks";
 
+import styles from "./Sidebar.module.css";
 import conersationStarter from "./conversation_starter.json";
-import { useLocalStorage } from "../../helper/hooks";
 
 export default function ({
   allUsers,

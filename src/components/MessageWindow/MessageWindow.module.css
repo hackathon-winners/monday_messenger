@@ -17,6 +17,12 @@
   margin-bottom: 8px;
 }
 
+.empty img {
+  border-radius: 50%;
+  width: 140px;
+  height: 140px;
+}
+
 .empty p {
   color: #111;
   font-size: 15px;

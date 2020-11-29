@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+
 import styles from "./ResizeableTextarea.module.css";
 
 export default function ({ text, setText, activeUserId }) {

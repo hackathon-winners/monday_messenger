@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+
 import {
   Carousel, // our UI Component to display the results
   SearchBar, // the search bar the user will type into

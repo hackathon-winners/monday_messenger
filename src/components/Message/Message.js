@@ -1,7 +1,8 @@
 import React from "react";
 
+import { dateformatter } from "helper/date";
+
 import styles from "./Message.module.css";
-import { dateformatter } from "../../helper/date";
 
 export default function ({
   user,
@@ -32,7 +33,9 @@ export default function ({
             {!message.text.includes("giphy.com") && (
               <div className={styles.message}>{message.text}</div>
             )}
-            {message.text.includes("giphy.com") && <img src={message.text} />}
+            {message.text.includes("giphy.com") && (
+              <img src={message.text} alt={"Giphy Animated Preview"} />
+            )}
           </div>
         </div>
       </>
@@ -50,7 +53,9 @@ export default function ({
           {!message.text.includes("giphy.com") && (
             <div className={styles.message}>{message.text}</div>
           )}
-          {message.text.includes("giphy.com") && <img src={message.text} />}
+          {message.text.includes("giphy.com") && (
+            <img src={message.text} alt={"Giphy Animated Preview"} />
+          )}
         </div>
       </div>
     </>

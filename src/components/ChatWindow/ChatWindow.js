@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import ResizeableTextarea from "../ResizeableTexarea/ResizeableTextarea";
-import styles from "./ChatWindow.module.css";
+
 import { Button } from "monday-ui-react-core";
 import Update from "monday-ui-react-core/dist/icons/Update";
-import GiphySearch from "../GiphySearch/GiphySearch";
-
 import Picker from "emoji-picker-react";
 
-import { useLocalStorage } from "../../helper/hooks";
+import ResizeableTextarea from "components/ResizeableTexarea/ResizeableTextarea";
+import GiphySearch from "components/GiphySearch/GiphySearch";
+import { useLocalStorage } from "helper/hooks";
+
+import styles from "./ChatWindow.module.css";
 
 export default function ({
   currentUserId,
@@ -58,7 +59,7 @@ export default function ({
     return () => {
       document.removeEventListener("keydown", keyHandler, false);
     };
-  }, [currentUserId, activeUserId, text, sendMessage]);
+  }, [currentUserId, activeUserId, text, sendMessage, context, setText]);
 
   // not ready yet
   if (!activeUserId || !currentUserId) {

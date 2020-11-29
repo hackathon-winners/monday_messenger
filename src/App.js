@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from "react";
-import styles from "./App.module.css";
-import mondaySdk from "monday-sdk-js";
 
-import Sidebar from "./components/Sidebar/Sidebar";
-import MessageWindow from "./components/MessageWindow/MessageWindow";
-import ChatWindow from "./components/ChatWindow/ChatWindow";
+import Sidebar from "components/Sidebar/Sidebar";
+import MessageWindow from "components/MessageWindow/MessageWindow";
+import ChatWindow from "components/ChatWindow/ChatWindow";
 
-import {
-  loadMessages,
-  sendMessage,
-  loadActiveChats,
-  removeFromList,
-} from "./helper/api";
-import { useLocalStorage } from "./helper/hooks";
+import MondayChatDataLayer from "helper/MondayChatDataLayer";
+import { useLocalStorage } from "helper/hooks";
 
 import "monday-ui-react-core/dist/main.css";
+import styles from "App.module.css";
 
-const monday = mondaySdk();
+const mdl = MondayChatDataLayer();
 
 export default function () {
   const [context, setContext] = useState();
@@ -32,44 +26,34 @@ export default function () {
   const [activeUserId, setActiveUserId] = useLocalStorage("activeUserId", null);
   const [activeMessages, setActiveMessages] = useState([]);
 
+  /**
+   *
+   * First Actions are getting context, get loggedin user
+   * and recieve all Users for autocomplete, User Information
+   *
+   */
   useEffect(() => {
-    // get context
-    monday.listen("context", (res) => {
-      setContext(res.data);
+    // get the context
+    mdl.getContext(setContext);
+    // get all Users + current User
+    mdl.getUserAndAllUsers().then((res) => {
+      // we set the loggedin user
+      setCurrentUser(res.data.me);
+      // and all users
+      setAllUsers(res.data.users);
     });
-    // get userdata
-    monday
-      .api(
-        `query {
-            me { id name }
-            users (kind: all) {
-              id
-              title
-              name
-              birthday
-              is_guest
-              location
-              join_date
-              time_zone_identifier
-              email
-              mobile_phone
-              phone
-              photo_thumb_small
-              photo_small
-              url
-            }
-        }`,
-        { variables: {} }
-      )
-      .then((res) => {
-        // we set the loggedin user
-        setCurrentUser(res.data.me);
-        // and all users
-        setAllUsers(res.data.users);
-      });
   }, []);
 
-  // get messages for active chatpartner
+  /**
+   *
+   * Next up if we have the loggedin User we load the active
+   * Chats as well as starting the Update Timer when messages
+   * are incoming.
+   *
+   * It only updates all 28 seconds to be nice to the API,
+   * can be faster but I think thats alright.
+   *
+   */
   useEffect(() => {
     if (currentUser && currentUser.id) {
       loadActiveChatsHandler(currentUser.id);
@@ -82,54 +66,81 @@ export default function () {
     return () => clearInterval(interval);
   }, [currentUser]);
 
-  // get messages for active chatpartner
+  /**
+   *
+   * Next up we load the messages of the active Chat window we
+   * have open and start the Update Timer for this window.
+   *
+   * Here we load every 8th second, because messages should return quicker.
+   *
+   */
   useEffect(() => {
     if (activeUserId && currentUser && currentUser.id) {
-      loadMessages(monday, currentUser.id, activeUserId).then((response) =>
-        setActiveMessages(response)
-      );
+      mdl
+        .loadMessages(currentUser.id, activeUserId)
+        .then((response) => setActiveMessages(response));
     }
-
+    // here we are little faster
     const interval = setInterval(() => {
-      loadMessages(monday, currentUser.id, activeUserId).then((response) =>
-        setActiveMessages(response)
-      );
+      mdl
+        .loadMessages(currentUser.id, activeUserId)
+        .then((response) => setActiveMessages(response));
     }, 8000);
 
     return () => clearInterval(interval);
   }, [activeUserId, currentUser]);
 
-  // Message loader
+  /**
+   *
+   * Function to load active Chats
+   *
+   */
   const loadActiveChatsHandler = async (userId) => {
-    const chatsArray = await loadActiveChats(monday, userId);
+    const chatsArray = await mdl.loadActiveChats(userId);
     // put messages into state
     setActiveChats(chatsArray);
     setListedChats(chatsArray);
   };
 
+  /**
+   *
+   * Function to send Message
+   *
+   */
   const sendMessageHandler = (currentUserId, activeUserId, text, context) => {
     if (text) {
-      sendMessage({
-        monday,
-        context,
-        currentUserId,
-        activeUserId,
-        messageText: text,
-        setActiveChats,
-      }).then((resp) => setActiveMessages(resp));
+      mdl
+        .sendMessage({
+          context,
+          currentUserId,
+          activeUserId,
+          messageText: text,
+          setActiveChats,
+        })
+        .then((resp) => setActiveMessages(resp));
     }
   };
-
+  /**
+   *
+   * Function to make a Chat read (after clicking on it)
+   *
+   */
   const makeUnreadHandler = (userId) => {
-    removeFromList({
-      monday,
-      key: `${currentUser.id}_unread`,
-      userId: userId,
-    }).then((res) => {
-      loadActiveChatsHandler(userId);
-    });
+    mdl
+      .removeFromList({
+        key: `${currentUser.id}_unread`,
+        userId: userId,
+      })
+      .then((res) => {
+        loadActiveChatsHandler(userId);
+      });
   };
 
+  /**
+   *
+   * Finally Render
+   *
+   */
   return (
     <div className={styles.App}>
       <div className={styles.sidebar}>
