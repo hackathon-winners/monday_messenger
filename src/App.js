@@ -10,7 +10,7 @@ import { useLocalStorage } from "helper/hooks";
 import "monday-ui-react-core/dist/main.css";
 import styles from "App.module.css";
 
-const mdl = MondayChatDataLayer();
+const mdl = new MondayChatDataLayer();
 
 export default function () {
   const [context, setContext] = useState();
