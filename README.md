@@ -13,6 +13,8 @@ This app was developed for the monday apps challenge. It runs soley on monday.co
 - Emojis
 - Giphy Integration
 - Conversation Starter Suggestions
+- Dark Mode
+- Notification System
 - Great UX for typing, tabbing with smart local storage caching of settings and messages.
 
 For the App challenge following things were important to me:
@@ -68,8 +70,8 @@ A quick Guide through their process:
 ## Possible new features
 
 - Group Chat possibility (Architecture allows it, add new Data type that stores members)
-- Security (Talk to monday.com security team to ask for permitted storage API requests, so that "hackers" cannot read messages between people when knowing the keys)
-- Notification System: it is already build in until I realised, notifications can only sent regarding items, not regarding boards -> discussion: [monday community](https://community.monday.com/t/notification-handling-via-graphql/13730/2)
+- Security (Talk to monday.com security team to ask for permitted storage API requests, so that "hackers" cannot read messages between people when knowing their UserIds)
+- Notification System: I currently need an ItemId (can be configured in settings) to guide my notification -> discussion: [monday community](https://community.monday.com/t/notification-handling-via-graphql/13730/2)
 
 ## Architecture
 
@@ -83,4 +85,4 @@ To avoid data corruption i designed writing processes in a way, that only one en
 
 ![System Diagram of Data flows](/docs/arch2.png)
 
-![System Diagram of Data flows](/docs/arch3.png)
+![System Diagram of Data flows](/docs/bundle.png)
