@@ -215,10 +215,10 @@ class MondayChatDataLayer {
   }
 
   /**
-   * Mute a Channel
+   * Toggle the channel to unread
    *
-   * @param   {String}  key     Storage Key
-   * @param   {Int}  userId     UserId that owns that List
+   * @param   {Int}  currentUserId  User of loggedin user
+   * @param   {Int}  userId         UserId that marks unread channel
    *
    * @return  {Promise}         Return Monday API promise
    */
@@ -245,8 +245,8 @@ class MondayChatDataLayer {
   /**
    * Mute a Channel
    *
-   * @param   {String}  key     Storage Key
-   * @param   {Int}  userId     UserId that owns that List
+   * @param   {Int}  currentUserId  User of loggedin user
+   * @param   {Int}  userId         UserId that owns that List
    *
    * @return  {Promise}         Return Monday API promise
    */
