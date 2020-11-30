@@ -120,7 +120,7 @@ export default function () {
    * Function to send Message
    *
    */
-  const sendMessageHandler = (currentUserId, activeUserId, text) => {
+  const sendMessageHandler = (currentUserId, activeUserId, text, itemId) => {
     if (text) {
       mdl
         .sendMessage({
@@ -128,6 +128,7 @@ export default function () {
           activeUserId,
           messageText: text,
           setActiveChats,
+          itemId,
         })
         .then((resp) => setActiveMessages(resp));
     }

@@ -119,6 +119,25 @@ class MondayChatDataLayer {
   }
 
   /**
+   * Get all the muted Chats of user
+   *
+   * @param   {Int}  userId
+   *
+   * @return  {Array}          List of all active Chats (active/unread)
+   */
+  async loadMutedChats(userId) {
+    const storageKeyActive = `cchat_${userId}_active`;
+
+    const chatsRaw = await this.monday.storage.instance.getItem(
+      storageKeyActive
+    );
+
+    const chats = JSON.parse(chatsRaw.data.value) || [];
+
+    return chats.filter((chat) => chat.muted).map((chat) => chat.userId);
+  }
+
+  /**
    * Send a Message from a person to a Person
    *
    * @param   {Object}  from  Loggedin User ID
@@ -193,8 +212,8 @@ class MondayChatDataLayer {
     // And
     // - the channel was not muted
     if (itemId > 0) {
-      this.loadMutedChats(currentUserId).then((isMutedArray) => {
-        if (!isMutedArray.includes(activeUserId)) {
+      this.loadMutedChats(activeUserId).then((isMutedArray) => {
+        if (!isMutedArray.includes(currentUserId)) {
           this.monday
             .api(
               `mutation {
@@ -254,11 +273,8 @@ class MondayChatDataLayer {
     const storageKey = `cchat_${currentUserId}_active`;
     const chatsRaw = await this.monday.storage.instance.getItem(storageKey);
 
-    let chats = JSON.parse(chatsRaw.data.value);
+    let chats = JSON.parse(chatsRaw.data.value) || [];
 
-    if (!chats) {
-      chats = [];
-    }
     for (let i = 0; i < chats.length; i++) {
       if (chats[i].userId === userId) {
         chats[i].muted = !chats[i].muted;
@@ -301,12 +317,8 @@ class MondayChatDataLayer {
   async updateList({ key, userId, message, type, setActiveChats = (r) => {} }) {
     const chatsRaw = await this.monday.storage.instance.getItem(key);
 
-    let chats = JSON.parse(chatsRaw.data.value);
+    let chats = JSON.parse(chatsRaw.data.value) || [];
     let newItem = undefined;
-
-    if (!chats) {
-      chats = [];
-    }
 
     for (let i = 0; i < chats.length; i++) {
       if (chats[i].userId === userId) {
