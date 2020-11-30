@@ -84,7 +84,7 @@ class MondayChatDataLayer {
       storageKeyActive
     );
 
-    const chatsArray = JSON.parse(chatsRaw.data.value);
+    const chatsArray = JSON.parse(chatsRaw.data.value) || [];
 
     return chatsArray;
   }
