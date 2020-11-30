@@ -61,5 +61,5 @@
 }
 :global(.dark) .person:hover,
 :global(.dark) .active {
-  background: #454d83;
+  background: #363a52;
 }
