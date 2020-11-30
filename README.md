@@ -6,6 +6,8 @@ This Messenger System allows you to chat with team members on the monday.com pla
 
 This app was developed for the monday apps challenge. It runs soley on monday.com infrastructure and renders as a board view.
 
+[![Button](https://dapulse-res.cloudinary.com/image/upload/f_auto,q_auto/remote_mondaycom_static/uploads/Tal/4b5d9548-0598-436e-a5b6-9bc5f29ee1d9_Group12441.png)](https://auth.monday.com/oauth2/authorize?client_id=5712597f896dd54767f00d6849af909e&response_type=install)
+
 ### Features
 
 - Close to Realtime updates
