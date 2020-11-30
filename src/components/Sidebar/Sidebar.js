@@ -36,7 +36,9 @@ export default function ({
     }
 
     const possibleChatPartner = allUsers
-      .filter((user) => user.name.includes(searchTerm))
+      .filter((user) =>
+        user.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
       .map((user) => ({ userId: user.id }));
 
     setListedChats(possibleChatPartner);
